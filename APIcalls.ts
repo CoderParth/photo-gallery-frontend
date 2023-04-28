@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosRequestConfig, AxiosProgressEvent } from "axios"
 
 const metricsDomain =
   "https://o4tuy2cb73.execute-api.ap-southeast-2.amazonaws.com/dev/metrics"
@@ -27,15 +27,30 @@ const uploadImageDomain =
 const lambdaCors =
   "https://wq8ngbc7hi.execute-api.ap-southeast-2.amazonaws.com/dev/"
 
-export const uploadImage = async (file: File) => {
+export const uploadImage = async (
+  file: File,
+  onProgress: (percentage: number) => void
+) => {
   try {
     const formData = new FormData()
     formData.append("file", file)
-    const response = await axios.post(uploadImageDomain, formData, {
+
+    const config: AxiosRequestConfig<FormData> = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    })
+      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (progressEvent.loaded && progressEvent.total) {
+          const progress = Math.round(
+            (progressEvent.loaded / progressEvent.total) * 100
+          )
+          console.log(`File upload progress: ${progress}%`)
+          onProgress(progress)
+        }
+      },
+    }
+
+    const response = await axios.post(uploadImageDomain, formData, config)
     return response.data
   } catch (error) {
     console.error(error)

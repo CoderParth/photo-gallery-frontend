@@ -1,4 +1,3 @@
-// components/ResponsiveLayout.tsx
 import * as React from "react"
 import { useState } from "react"
 import {
@@ -15,7 +14,6 @@ import {
 } from "@mui/material"
 import styled from "@emotion/styled"
 import MenuIcon from "@mui/icons-material/Menu"
-import Metrics from "@/components/Metrics"
 
 const drawerWidth = 240
 
@@ -70,19 +68,7 @@ const ResponsiveLayout: React.FC<Props> = ({ children }) => {
         <DrawerContainer>
           <Divider />
 
-          {/*  metrics content goes here */}
-          <Box
-            sx={{
-              display: "flex",
-              marginTop: "33%",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <Metrics />
-          </Box>
+          {/* Drawer content goes here */}
         </DrawerContainer>
       </StyledDrawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
