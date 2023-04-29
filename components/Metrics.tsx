@@ -14,15 +14,27 @@ import {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
 
-const Metrics: React.FC = () => {
+interface Props {
+  submitted: boolean
+}
+
+const Metrics: React.FC<Props> = ({ submitted }) => {
   const [metrics, setMetrics] = useState<any>(null)
+
+  const fetchMetrics = async () => {
+    const metricsData = await getMetrics()
+    setMetrics(metricsData)
+  }
+
   useEffect(() => {
-    const fetchMetrics = async () => {
-      const metricsData = await getMetrics()
-      setMetrics(metricsData)
-    }
     fetchMetrics()
   }, [])
+
+  useEffect(() => {
+    if (submitted) {
+      fetchMetrics()
+    }
+  }, [submitted])
 
   const formatMetricsData = (data: any) => {
     return Object.keys(data).map((key) => ({
@@ -40,7 +52,9 @@ const Metrics: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6">Backend API Metrics</Typography>
+      <Typography variant="h6">
+        Backend API Metrics Over Last Two hours
+      </Typography>
       {metrics ? (
         <>
           <Box>

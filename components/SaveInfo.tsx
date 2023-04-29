@@ -1,5 +1,12 @@
 import React, { useState } from "react"
-import { TextField, Button, Chip, makeStyles } from "@material-ui/core"
+import {
+  TextField,
+  Button,
+  Chip,
+  makeStyles,
+  Box,
+  CircularProgress,
+} from "@material-ui/core"
 import { AddCircle } from "@material-ui/icons"
 import Typography from "@material-ui/core/Typography"
 
@@ -20,6 +27,7 @@ const useStyles = makeStyles({
 
 interface Props {
   onSubmit: (formData: FormData) => void
+  saving: boolean
 }
 
 interface FormData {
@@ -28,7 +36,7 @@ interface FormData {
   tags: string[]
 }
 
-const SaveInfo: React.FC<Props> = ({ onSubmit }) => {
+const SaveInfo: React.FC<Props> = ({ onSubmit, saving }) => {
   const classes = useStyles()
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -107,21 +115,32 @@ const SaveInfo: React.FC<Props> = ({ onSubmit }) => {
           style={{ flexGrow: 1, border: "none", outline: "none" }}
         />
       </div>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        startIcon={<AddCircle />}
-        fullWidth
-        style={{ marginTop: "16px" }}
-        disabled={
-          !formData.username ||
-          !formData.description ||
-          formData.tags.length === 0
-        }
-      >
-        Post Image
-      </Button>
+      {saving ? (
+        <Box display="flex" alignItems="center">
+          <Button color="primary" variant="contained" disabled>
+            Posting...
+          </Button>
+          <Box ml={2}>
+            <CircularProgress />
+          </Box>
+        </Box>
+      ) : (
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          startIcon={<AddCircle />}
+          fullWidth
+          style={{ marginTop: "16px" }}
+          disabled={
+            !formData.username ||
+            !formData.description ||
+            formData.tags.length === 0
+          }
+        >
+          Post Image
+        </Button>
+      )}
     </form>
   )
 }

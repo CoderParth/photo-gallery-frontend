@@ -27,16 +27,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-interface ImageUploadProps {
-  onUpload: (response: any) => void
+interface Props {
+  setOpenDialog: (value: boolean) => void
+  setSubmitted: (value: boolean) => void
 }
 
-// const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload }) => {
-const ImageUpload: React.FC = () => {
+const ImageUpload: React.FC<Props> = ({ setOpenDialog, setSubmitted }) => {
   const classes = useStyles()
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [progress, setProgress] = useState(0)
   const [metaData, setMetaData] = useState("")
   const [imageId, setImageId] = useState("")
@@ -61,6 +62,7 @@ const ImageUpload: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     console.log(data)
+    setSaving(true)
     try {
       await saveImageInfo({
         ...data,
@@ -69,8 +71,12 @@ const ImageUpload: React.FC = () => {
       })
       await saveImageMetadata(metaData)
       resetState()
+      setSubmitted(true)
     } catch (error) {
       console.error(error)
+    } finally {
+      setSaving(false)
+      setOpenDialog(false)
     }
   }
 
@@ -102,25 +108,6 @@ const ImageUpload: React.FC = () => {
       setPreviewUrl(null)
     }
   }
-
-  // const handleUploadButtonClick = async () => {
-  //   if (file) {
-  //     try {
-  //       setUploading(true)
-  //       const response = await uploadImage(file, (percentage) => {
-  //         setProgress(percentage)
-  //       })
-  //       console.log(response)
-  //       onUpload(response)
-  //       // setFile(null)
-  //       // setPreviewUrl(null)
-  //     } catch (error) {
-  //       console.error(error)
-  //     } finally {
-  //       setUploading(false)
-  //     }
-  //   }
-  // }
 
   const handleDeleteButtonClick = () => {
     setFile(null)
@@ -176,7 +163,7 @@ const ImageUpload: React.FC = () => {
           Upload
         </Button> */}
       </Box>
-      <SaveInfo onSubmit={onSubmit} />
+      <SaveInfo onSubmit={onSubmit} saving={saving} />
     </Box>
   )
 }

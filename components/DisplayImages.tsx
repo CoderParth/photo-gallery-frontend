@@ -1,140 +1,3 @@
-// import React, { useEffect, useState } from "react"
-// import { makeStyles } from "@material-ui/core/styles"
-// import Grid from "@material-ui/core/Grid"
-// import Card from "@material-ui/core/Card"
-// import CardMedia from "@material-ui/core/CardMedia"
-// import CardContent from "@material-ui/core/CardContent"
-// import Typography from "@material-ui/core/Typography"
-// import { getAllImagesInfo, getAllImagesMetadata } from "@/APIcalls"
-
-// const useStyles = makeStyles((theme) => ({
-//   root: {
-//     flexGrow: 1,
-//     padding: theme.spacing(2),
-//   },
-//   card: {
-//     maxWidth: 345,
-//   },
-//   media: {
-//     height: 0,
-//     paddingTop: "56.25%", // 16:9
-//   },
-// }))
-
-// interface ImageMetadata {
-//   FileExtension: string
-//   UploadDate: string
-//   ImageUrl: string
-//   FileSize: number
-//   ImageID: string
-// }
-
-// const DisplayImages = () => {
-//   const classes = useStyles()
-//   const [imagesInfo, setImagesInfo] = useState([])
-//   const [imagesMetadata, setImagesMetadata] = useState([])
-
-//   useEffect(() => {
-//     const fetchImages = async () => {
-//       const infoResponse = await getAllImagesInfo()
-//       if (infoResponse) {
-//         const infoData = infoResponse.imageInfo
-//         console.log("infosresponse", infoResponse)
-//         setImagesInfo(infoData)
-//       }
-
-//       const metadataResponse = await getAllImagesMetadata()
-//       if (metadataResponse) {
-//         const metadataData = metadataResponse.metadata
-//         setImagesMetadata(metadataData)
-//       }
-//     }
-//     fetchImages()
-//   }, [])
-
-//   const getImageMetadata = (imageId: string): ImageMetadata | undefined => {
-//     return imagesMetadata.find(
-//       (metadata: ImageMetadata) => metadata.ImageID === imageId
-//     )
-//   }
-
-//   const getImageInfo = (imageId: string) => {
-//     return imagesInfo.find((info: any) => info.imageInfo.image_id === imageId)
-//   }
-
-//   return (
-//     <div className={classes.root}>
-//       <Grid container spacing={2}>
-//         {Array.isArray(imagesInfo) && imagesInfo.length > 0 ? (
-//           imagesInfo.map((info: any, index) => (
-//             <Grid item xs={12} sm={6} md={4} key={index}>
-//               <Card className={classes.card}>
-//                 <CardMedia
-//                   className={classes.media}
-//                   image={info?.image_url}
-//                   title={info?.description}
-//                 />
-//                 <CardContent>
-//                   <Typography gutterBottom variant="h5" component="h2">
-//                     {info?.description}
-//                   </Typography>
-//                   <Typography
-//                     variant="body2"
-//                     color="textSecondary"
-//                     component="p"
-//                   >
-//                     tags here
-//                     {/* {info?.tags.join(", ")} */}
-//                   </Typography>
-//                   <Typography
-//                     variant="body2"
-//                     color="textSecondary"
-//                     component="p"
-//                   >
-//                     Uploaded by {info?.username}
-//                   </Typography>
-//                   {/* Metadata goes here */}
-//                   <Typography
-//                     variant="body2"
-//                     color="textSecondary"
-//                     component="p"
-//                   >
-//                     {`File Extension: ${
-//                       getImageMetadata(info.image_id)?.FileExtension || "-"
-//                     }`}
-//                   </Typography>
-//                   <Typography
-//                     variant="body2"
-//                     color="textSecondary"
-//                     component="p"
-//                   >
-//                     {`File Size: ${
-//                       getImageMetadata(info.image_id)?.FileSize || "-"
-//                     } bytes`}
-//                   </Typography>
-//                   <Typography
-//                     variant="body2"
-//                     color="textSecondary"
-//                     component="p"
-//                   >
-//                     {`Upload Date: ${
-//                       getImageMetadata(info.image_id)?.UploadDate || "-"
-//                     }`}
-//                   </Typography>
-//                 </CardContent>
-//               </Card>
-//             </Grid>
-//           ))
-//         ) : (
-//           <div>No images</div>
-//         )}
-//       </Grid>
-//     </div>
-//   )
-// }
-
-// export default DisplayImages
-
 import React, { useEffect, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import Grid from "@material-ui/core/Grid"
@@ -180,27 +43,40 @@ interface MergedImage extends ImageInfo, ImageMetadata {
   image_id?: string | number
 }
 
-const DisplayImages = () => {
+interface Props {
+  submitted: boolean
+  setSubmitted: (value: boolean) => void
+}
+
+const DisplayImages: React.FC<Props> = ({ submitted, setSubmitted }) => {
   const classes = useStyles()
   const [imagesInfo, setImagesInfo] = useState([])
   const [imagesMetadata, setImagesMetadata] = useState([])
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      const infoResponse = await getAllImagesInfo()
-      if (infoResponse) {
-        const infoData = infoResponse.imageInfo
-        setImagesInfo(infoData)
-      }
-
-      const metadataResponse = await getAllImagesMetadata()
-      if (metadataResponse) {
-        const metadataData = metadataResponse.metadata
-        setImagesMetadata(metadataData)
-      }
+  const fetchImages = async () => {
+    const infoResponse = await getAllImagesInfo()
+    if (infoResponse) {
+      const infoData = infoResponse.imageInfo
+      setImagesInfo(infoData)
     }
+
+    const metadataResponse = await getAllImagesMetadata()
+    if (metadataResponse) {
+      const metadataData = metadataResponse.metadata
+      setImagesMetadata(metadataData)
+    }
+  }
+
+  useEffect(() => {
     fetchImages()
   }, [])
+
+  useEffect(() => {
+    if (submitted) {
+      fetchImages()
+      setSubmitted(false) // Set the submitted prop back to false
+    }
+  }, [submitted])
 
   function mergeImageInfoAndMetadata(
     imageInfoArray: ImageInfo[],
