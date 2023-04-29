@@ -57,11 +57,9 @@ const ImageUpload: React.FC<Props> = ({ setOpenDialog, setSubmitted }) => {
     setMetaData(response.metaData)
     setImageId(response.metaData.imageId)
     setImageUrl(response.metaData.imageUrl)
-    console.log("imageresponse", response)
   }
 
   const onSubmit = async (data: any) => {
-    console.log(data)
     setSaving(true)
     try {
       await saveImageInfo({
@@ -96,7 +94,6 @@ const ImageUpload: React.FC<Props> = ({ setOpenDialog, setSubmitted }) => {
             setProgress(percentage)
           }
         )
-        console.log(response)
         onUpload(response)
       } catch (error) {
         console.error(error)
@@ -153,16 +150,6 @@ const ImageUpload: React.FC<Props> = ({ setOpenDialog, setSubmitted }) => {
           No file chosen
         </Typography>
       )}
-      <Box mt={2}>
-        {/* <Button
-          variant="contained"
-          color="primary"
-          disabled={!file}
-          onClick={handleUploadButtonClick}
-        >
-          Upload
-        </Button> */}
-      </Box>
       <SaveInfo onSubmit={onSubmit} saving={saving} />
     </Box>
   )

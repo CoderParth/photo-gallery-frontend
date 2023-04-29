@@ -58,32 +58,16 @@ export const uploadImage = async (
   }
 }
 
-// export const getMetrics = async () => {
-//   try {
-//     const response = await axios.get()
-//     console.log(response)
-//     return response.data
-//   } catch (error) {
-//     console.error(error)
-//     throw new Error("Failed to get metrics")
-//   }
-// }
 export const saveImageInfo = async (data: any) => {
   try {
-    console.log(data)
     // If tags is an array, convert it to a comma-separated string
     if (Array.isArray(data.tags)) {
       data.tags = data.tags.join(", ")
     }
 
-    console.log("splitting")
-    console.log(data)
     const response = await axios.post(saveInfoDomain, data)
-
-    console.log("this is the response", response)
     if (response.status === 201) {
       const responseData = response.data
-      console.log("Image info saved successfully:", responseData)
       return responseData
     }
   } catch (error) {
@@ -96,10 +80,8 @@ export const saveImageMetadata = async (metadata: any) => {
   try {
     const response = await axios.post(saveMetadataDomain, metadata)
 
-    console.log(response)
     if (response.status === 200) {
       const responseData = response.data
-      console.log("Image metadata saved successfully:", responseData)
       return responseData
     }
   } catch (error) {
@@ -114,7 +96,6 @@ export const getMetrics = async () => {
 
     if (response.status === 200) {
       const responseData = response.data
-      console.log("Metrics data retrieved successfully:", responseData)
       return responseData
     } else {
       throw new Error("Failed to retrieve metrics data")
@@ -128,7 +109,6 @@ export const getMetrics = async () => {
 export const getAllImagesInfo = async () => {
   try {
     const response = await axios.get(allImagesInfoDomain)
-    console.log(response)
     if (response.status === 200) {
       const data = response.data
       return data
@@ -144,7 +124,7 @@ export const getAllImagesInfo = async () => {
 export const getAllImagesMetadata = async () => {
   try {
     const response = await axios.get(allImagesMetadataDomain)
-    console.log(response)
+
     if (response.status === 200) {
       const data = response.data
       return data
